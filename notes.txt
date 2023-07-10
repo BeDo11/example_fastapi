@@ -1,0 +1,4 @@
+py -3 -m venv venv
+uvicorn app.main:app --reload
+
+alembic revision -m "create posts table"
