@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from app.database import get_db, Base
+from sqlalchemy_utils import database_exists, create_database
+from app.database import get_db
 from app.main import app
 from app.config import settings
 import pytest
@@ -12,16 +12,16 @@ from alembic.config import Config
 SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}_test"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if not database_exists(engine.url):
+    create_database(engine.url)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 alembic_cfg = Config("alembic.ini")
 
 @pytest.fixture(scope="function")
 def session():
-    #command.downgrade(alembic_cfg, "base")
-    #command.upgrade(alembic_cfg, "head")
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+    command.downgrade(alembic_cfg, "base")
+    command.upgrade(alembic_cfg, "head")
     db = TestSessionLocal()
     try:
         yield db
