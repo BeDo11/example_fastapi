@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: deloying to ubuntu server
-        uses: appleboy/ssh-action@v0.1.10"
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{secrets.PROD_HOST}}
           port: 2522
