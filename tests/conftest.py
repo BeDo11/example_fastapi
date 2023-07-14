@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from app.database import get_db
+from app.database import get_db, Base
 from app.main import app
 from app.config import settings
 import pytest
@@ -18,8 +18,10 @@ alembic_cfg = Config("alembic.ini")
 
 @pytest.fixture(scope="function")
 def session():
-    command.downgrade(alembic_cfg, "base")
-    command.upgrade(alembic_cfg, "head")
+    #command.downgrade(alembic_cfg, "base")
+    #command.upgrade(alembic_cfg, "head")
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
     db = TestSessionLocal()
     try:
         yield db
